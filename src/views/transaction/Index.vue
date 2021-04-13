@@ -16,6 +16,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>Time</th>
                                     <th>Title</th>
                                     <th>Amount</th>
                                     <th>Type</th>
@@ -25,6 +26,7 @@
 
                             <tbody>
                                 <tr v-for="(transaction,index) in transactions.data" :key="index">
+                                    <td>{{ transaction.time }}</td>
                                     <td>{{ transaction.title }}</td>
                                     <td>{{ transaction.amount }}</td>
                                     <td>{{ transaction.type }}</td>
@@ -35,7 +37,9 @@
                                                 class="btn btn-outline-info btn-sm"
                                                 >Edit</router-link>
 
-                                                <button class="btn btn-sm btn-outline-danger ">Delete</button>
+                                                <button class="btn btn-sm btn-outline-danger ms-2"
+                                                    @click.prevent="destroy(transaction.id, index)"
+                                                >Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -69,8 +73,21 @@ export default {
             });
         });
 
+        function destroy(id,index){
+            axios.delete(
+                `http://127.0.0.1:8000/api/transaction/${id}`
+            )
+
+            .then(()=>{
+                transactions.value.data.splice(index, 1)
+            }).catch((err)=>{
+                console.log(err.response.data);
+            });
+        }
+
         return {
-            transactions
+            transactions,
+            destroy
         }
     }
 }
